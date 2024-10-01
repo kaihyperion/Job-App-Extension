@@ -1,6 +1,26 @@
+# Job Application Automation Chrome Extension
+
+This project is a Google Chrome extension built using React that automates job application submissions by filling in forms based on user input and an LLM (Large Language Model) for dynamic form field mapping.
+
+## Features
+- Popup UI to input job URL and resume type.
+- Automatically fills job application forms on major job portals.
+- Dynamically maps form fields using LLM (e.g., GPT-4).
+
+## Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/job-app-extension.git
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
+
+
+
 
 ## Available Scripts
 
