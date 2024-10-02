@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mock Job Application Form</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+    }
+    input, select, button {
+      margin-bottom: 20px;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <h1>Mock Job Application Form</h1>
+  
+  <form id="jobApplicationForm">
+    <label for="name">Full Name:</label>
+    <input type="text" id="name" name="name" placeholder="Enter your full name">
+
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" placeholder="Enter your email">
+
+    <label for="resume">Upload Resume:</label>
+    <input type="file" id="resume" name="resume">
+
+    <button type="submit">Submit Application</button>
+  </form>
+
+  <script>
+    document.getElementById('jobApplicationForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      alert('Job application submitted!');
+    });
+  </script>
+</body>
+</html>

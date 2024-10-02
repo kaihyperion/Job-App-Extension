@@ -7,6 +7,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         // Find active and currently opened window tab and send a message to content script
         chrome.tabs.query({ active: true, currentWindow: true}, (tabs) => {
             const activeTabId = tabs[0].id;
+            
 
             // send message to content script to fill out the form on job portal
             chrome.tabs.sendMessage(activeTabId, {
