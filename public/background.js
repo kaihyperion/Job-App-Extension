@@ -1,7 +1,31 @@
+/*global chrome*/
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    // listen for "apply" message from popup
     if (request.action === "apply") {
-        console.log("Applying to job at:", request.jobUrl);
-        sendResponse({ status: "Job application started"});
+        console.log("Received apply request for job at:", request.jobUrl);
+
+        // Find active and currently opened window tab and send a message to content script
+        chrome.tabs.query({ active: true, currentWindow: true}, (tabs) => {
+            const activeTabId = tabs[0].id;
+
+            // send message to content script to fill out the form on job portal
+            chrome.tabs.sendMessage(activeTabId, {
+                action: "fillForm",
+                jobUrl: request.jobUrl,
+                resumeType: request.resumeType
+            }, (response) => {
+                // Handle async respons from content script
+                if (response && response.status === "success") {
+                    console.log("Job application process started.");
+                    sendResponse({status: "Job application successful!"});
+                } else {
+                    console.log("Failed to fill job application form.");
+                    sendResponse({ status: "Job Application failed"});
+                }
+            });
+        });
+        // return true to indicate my want to response async
+        return true;
     }
 });
 
