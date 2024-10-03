@@ -3,8 +3,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === "fillForm") {
       console.log("Filling form on the job portal for:", request.jobUrl);
 
-      const jobUrl = request.jobUrl;
-      const resumeType = request.resumeType;
+      const fieldMapping = request.fieldMapping;
+      
+      // const jobUrl = request.jobUrl;
+      // const resumeType = request.resumeType;
 
       // just some simulation on filling out form
       // need to change this later (to adapt to other job portals)

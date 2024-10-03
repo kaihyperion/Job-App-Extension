@@ -21,3 +21,6 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# make sure api key is not in
+.env
