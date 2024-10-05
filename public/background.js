@@ -18,6 +18,7 @@ async function callGPT4API(jobUrl, resumeType) {
     }
 }
 
+
 chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
     if (request.action === 'apply') {
         const fieldMapping = await callGPT4API(request.jobUrl, request.resumeType);
