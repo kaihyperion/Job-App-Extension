@@ -4,32 +4,34 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       console.log("Filling form on the job portal for:", request.jobUrl);
 
       const fieldMapping = request.fieldMapping;
-      
-      // const jobUrl = request.jobUrl;
-      // const resumeType = request.resumeType;
+      let formFilled = false;
 
-      // just some simulation on filling out form
-      // need to change this later (to adapt to other job portals)
-      const nameInput = document.querySelector("input[name='name']");
-      const emailInput = document.querySelector("input[name='email']");
-      const resumeUploadInput = document.querySelector("input[type='file']");
 
-      if (nameInput && emailInput && resumeUploadInput) {
-        nameInput.value = "Kai Yun";
-        emailInput.value = "kyperion.workmode@gmail.com";
-        // resumeUploadInput.files = [new File(["resume"], `${resumeType}_resume.pdf`)];
-
-        // some example form submission (CHANGE LATER)
-        const submitButton = document.querySelector("button[type='submit']");
-        if (submitButton) {
-          submitButton.click();
-        }
-
-        // let background (service worker) know that form was filled succesfully
-        sendResponse({ status: "success"});
-        } else {
-          console.log("Faild to find necessary form element");
-          sendResponse({ status: "failure"});
+      // Helper function to fill in an input field by name or placeholder
+      function fillInputField(selector, value) {
+        const field = document.querySelector(selector);
+        if (field) {
+          field.value = value;
+          field.dispatchEvent(new Event('input', { bubbles: true}));
+          formFilled = true;
         }
       }
-    });
+
+      // Dynamically map based on field names or placeholder
+      fillInputField("input[name='name']", fieldMapping.name || "Kai Yun");
+      fillInputField("input[name='email']", fieldMapping.email || "Kyperion.workmode@gmail.com");
+      fillInputField("input[name='file']", fieldMapping.resume || "resume.pdf");
+      
+      fillInputField("div[data-placeholder='Full Name']", fieldMapping.name || "Kai Yun");
+      fillInputField("div[data-placeholder='Email Address']", fieldMapping.email || "kyperion.workmode@gmail.com");
+
+      // checking for submit buttons
+      const submitButton = document.querySelector("button[type='submit'], input[type='submit']");
+      if (submitButton && formFilled) {
+        submitButton.click();
+        sendResponse({ status: "success" });
+      } else {
+        sendResponse({ status: "failture", message: "Failed to find form elements" });
+      }
+    }
+  });
