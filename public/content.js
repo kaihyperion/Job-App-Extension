@@ -23,11 +23,21 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         if (dropdown) {
           Array.from(dropdown.options).forEach(option => {
             if (option.text === value) {
-              dropdown.value = option.value;
-              dropdown.dispatchEvent(new Event('change', { bubbles: true }));
+              dropdown.value = option.value; // set dropdown value
+              dropdown.dispatchEvent(new Event('change', { bubbles: true })); // trigger change event
               formFilled = true;
             }
           })
+        }
+      }
+
+      // Helper function to select radio buttons
+      function selectRadio(selector, value) {
+        const radioButton = document.querySelector(`input[name='${selector}'][value='${value}']`);
+        if (radioButton) {
+          radioButton.checked = true;
+          radioButton.dispatchEvent(new Event('change', { bubbles: true })); // trigger change event
+          formFilled = true;
         }
       }
 
