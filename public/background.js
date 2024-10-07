@@ -1,12 +1,13 @@
 /*global chrome*/
 async function callGPT4API(jobUrl, resumeType) {
     try {
+        const formFields = captureFormFields();
         const response = await fetch('http://localhost:3000/call-openai', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ jobUrl, resumeType })
+            body: JSON.stringify({ jobUrl, resumeType, formFields })
         });
 
         const data = await response.json();

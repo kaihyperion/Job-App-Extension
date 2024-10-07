@@ -1,10 +1,27 @@
 /*global chrome*/
+// Capture the current form fields on the page
+function captureFormFields() {
+  const inputs = document.querySelectorAll("input, textarea, select");
+  const fields = Array.from(inputs).map(input => {
+    return {
+      tag: input.tagName,
+      name: input.name || null,
+      id: input.id || null,
+      placeholder: input.placeholder || null,
+      type: input.type || null,
+      label: input.labels ? input.labels[0]?.innerText : null
+    };
+  });
+  return fields;
+}
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === "fillForm") {
-      console.log("Filling form on the job portal for:", request.jobUrl);
+      // console.log("Filling form on the job portal for:", request.jobUrl);
 
       const fieldMapping = request.fieldMapping;
       let formFilled = false;
+
 
 
       // Helper function to fill in an input field by name or placeholder
@@ -12,7 +29,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         const field = document.querySelector(selector);
         if (field) {
           field.value = value;
-          field.dispatchEvent(new Event('input', { bubbles: true}));
+          field.dispatchEvent(new Event('input', { bubbles: true})); // react-based forms where changes aren't recognized unless event is dispatched
           formFilled = true;
         }
       }
@@ -91,7 +108,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
       uploadFile("input[type='file']", fieldMapping.resume || "public/mock/Kai_Yun_app.pdf");
 
-      
+
       // checking for submit buttons
       const submitButton = document.querySelector("button[type='submit'], input[type='submit']");
       if (submitButton && formFilled) {
