@@ -1,7 +1,21 @@
 /*global chrome*/
-async function callGPT4API(jobUrl, resumeType) {
+
+// Function to send a message to the content script to capture form fields
+async function getFormFieldsFromContentScript(tabId) {
+    return new Promise((resolve, reject) => {
+        chrome.tabs.sendMessage(tabId, { action: "captureFields" }, (response) => {
+            if (chrome.runtime.lastError) {
+                reject(chrome.runtime.lastError);
+            } else {
+                resolve(response.fields);
+            }
+        });
+    });
+}
+
+// Function to call the GPT-4 API via your backend server
+async function callGPT4API(jobUrl, resumeType, formFields) {
     try {
-        const formFields = captureFormFields();
         const response = await fetch('http://localhost:3000/call-openai', {
             method: 'POST',
             headers: {
@@ -19,18 +33,45 @@ async function callGPT4API(jobUrl, resumeType) {
     }
 }
 
+// Inject content script manually into the active tab if not already injected
+async function injectContentScript(tabId) {
+    try {
+        await chrome.scripting.executeScript({
+            target: { tabId: tabId },
+            files: ['content.js']
+        });
+        console.log('Content script injected successfully.');
+    } catch (error) {
+        console.error('Failed to inject content script:', error);
+    }
+}
 
+// Listener for "apply" action from the popup or frontend
 chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
     if (request.action === 'apply') {
-        const fieldMapping = await callGPT4API(request.jobUrl, request.resumeType);
-        if (fieldMapping) {
-            sendResponse({ status: 'success', data: fieldMapping });
-        } else {
-            sendResponse({ status: 'failure' });
+        try {
+            // Get the active tab
+            const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
+
+            // Inject content script before messaging
+            await injectContentScript(activeTab.id);
+
+            // Capture form fields from the content script
+            const formFields = await getFormFieldsFromContentScript(activeTab.id);
+            console.log("Captured form fields:", formFields);
+
+            // Send the form fields and other data to the backend (LLM)
+            const fieldMapping = await callGPT4API(request.jobUrl, request.resumeType, formFields);
+
+            if (fieldMapping) {
+                sendResponse({ status: 'success', data: fieldMapping });
+            } else {
+                sendResponse({ status: 'failure' });
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            sendResponse({ status: 'failure', message: error.message });
         }
     }
-    return true;  // Keep the connection open for async response
+    return true;  // Keeps the async communication open
 });
-//background service worker (background script) is responsible for handling events and logic that need to run in the background, independently of the browser's tabs or user interaction
-/*background service worker is event-driven. it waits for specific events (message or browser action) and reacts to them
-in Manifest V3, background scripts have been replaced by service workers (efficient and needs less memory consumption) */

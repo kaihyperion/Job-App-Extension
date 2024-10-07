@@ -14,7 +14,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["file:///*/mock-job-form.html","https://*.workday.com/*"],
+      "matches": ["<all_urls>"],
       "js": ["content.js"]
     }
   ],
