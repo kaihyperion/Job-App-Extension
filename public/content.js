@@ -17,6 +17,21 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         }
       }
 
+      // Helper function to fill in dropdown (select) fields
+      function selectDropdown(selector, value) {
+        const dropdown = document.querySelector(selector);
+        if (dropdown) {
+          Array.from(dropdown.options).forEach(option => {
+            if (option.text === value) {
+              dropdown.value = option.value;
+              dropdown.dispatchEvent(new Event('change', { bubbles: true }));
+              formFilled = true;
+            }
+          })
+        }
+      }
+
+
       // Dynamically map based on field names or placeholder
       fillInputField("input[name='name']", fieldMapping.name || "Kai Yun");
       fillInputField("input[name='email']", fieldMapping.email || "Kyperion.workmode@gmail.com");
