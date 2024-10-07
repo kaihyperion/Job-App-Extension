@@ -72,6 +72,26 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       selectRadio('veteran_status', fieldMapping.veteranStatus || "no");
       
 
+      // Handle skills (multi-selects)
+      function addSkills(skills){
+        skills.forEach(skill => {
+          const skillInput = document.querySelector("input[name='skills']");
+          if (skillInput) {
+            skillInput.value = skill;
+            skillInput.dispatchEvent(new Event('input', { bubbles: true}));
+            const addSkillButton = document.querySelector("button.add-skill");
+            if (addSkillButton) {
+              addSkillButton.click();
+            }
+          }
+        });
+      }
+
+      addSkills(fieldMapping.skills || ["Python", "C++", "Web Development", "LLM"]);
+
+      uploadFile("input[type='file']", fieldMapping.resume || "public/mock/Kai_Yun_app.pdf");
+
+      
       // checking for submit buttons
       const submitButton = document.querySelector("button[type='submit'], input[type='submit']");
       if (submitButton && formFilled) {
