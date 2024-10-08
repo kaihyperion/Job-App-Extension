@@ -14,14 +14,14 @@ async function getFormFieldsFromContentScript(tabId) {
 }
 
 // Function to call the GPT-4 API via your backend server
-async function callGPT4API(jobUrl, resumeType, formFields) {
+async function callGPT4API(resumeType, formFields) {
     try {
         const response = await fetch('http://localhost:3000/call-openai', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ jobUrl, resumeType, formFields })
+            body: JSON.stringify({ resumeType, formFields })
         });
 
         const data = await response.json();
@@ -50,21 +50,24 @@ async function injectContentScript(tabId) {
 chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
     if (request.action === 'apply') {
         try {
-            // Get the active tab
             const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
-
-            // Inject content script before messaging
             await injectContentScript(activeTab.id);
 
-            // Capture form fields from the content script
+            // Capture form fields from content script
             const formFields = await getFormFieldsFromContentScript(activeTab.id);
             console.log("Captured form fields:", formFields);
 
-            // Send the form fields and other data to the backend (LLM)
-            const fieldMapping = await callGPT4API(request.jobUrl, request.resumeType, formFields);
-
+            // Send form fields to backend for LLM processing
+            const fieldMapping = await callGPT4API(request.resumeType, formFields);
+            console.log('GPT4 response:', fieldMapping);
+            
             if (fieldMapping) {
-                sendResponse({ status: 'success', data: fieldMapping });
+                // Send field mapping to content script for autofill
+                chrome.tabs.sendMessage(activeTab.id, { action: "fillForm", fieldMapping: fieldMapping }, (response) => {
+                    if (response.status === 'success') {
+                        console.log('Form filled successfully.');
+                    }
+                });
             } else {
                 sendResponse({ status: 'failure' });
             }
@@ -73,5 +76,5 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
             sendResponse({ status: 'failure', message: error.message });
         }
     }
-    return true;  // Keeps the async communication open
+    return true;
 });

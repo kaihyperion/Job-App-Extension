@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 function App() {
   // state declaration
    // const [state, setState] = useState(initialValue);
-  const [jobUrl, setJobUrl] = useState('');
+
   const [resumeType, setResumeType] = useState('swe');
   const [status, setStatus] = useState('');
 
@@ -17,7 +17,6 @@ function App() {
       chrome.runtime.sendMessage(
         {
           action: "apply",
-          jobUrl: jobUrl,
           resumeType: resumeType
         },
         (response) => {
@@ -35,13 +34,6 @@ function App() {
   return (
     <div style={{ padding: '10px' }}>
       <h2>Job Application Automator</h2>
-      <label htmlFor="job-url">Job URL:</label><br />
-      <input
-        type="text"
-        id="job-url"
-        value={jobUrl}
-        onChange={(e) => setJobUrl(e.target.value)}
-      /><br />
       <label htmlFor="resume">Resume Type:</label><br />
       <select
         id="resume"
