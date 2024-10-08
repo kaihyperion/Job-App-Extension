@@ -47,7 +47,7 @@ async function injectContentScript(tabId) {
     try {
         await chrome.scripting.executeScript({
             target: { tabId: tabId },
-            files: ['content.js']
+            files: ['js/content.js']
         });
         console.log('Content script injected successfully.');
     } catch (error) {
