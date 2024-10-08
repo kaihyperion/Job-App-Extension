@@ -15,13 +15,21 @@ async function getFormFieldsFromContentScript(tabId) {
 
 // Function to call the GPT-4 API via your backend server
 async function callGPT4API(resumeType, formFields) {
+    const userData = {
+        fullName: "Kai Yun",
+        firstName: "Kai",
+        lastName: "Yun",
+        phoneNumber: "7739642148",
+        email: "kai.yun@example.com",
+        address: "123 Main St, Cityville",
+    };
     try {
         const response = await fetch('http://localhost:3000/call-openai', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ resumeType, formFields })
+            body: JSON.stringify({ formFields, userData })
         });
 
         const data = await response.json();

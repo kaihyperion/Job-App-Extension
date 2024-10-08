@@ -1,14 +1,7 @@
 /*global chrome*/
 
 // General user information (to be provided dynamically or as part of form submission)
-const userData = {
-  fullName: "Kai Yun",
-  firstName: "Kai",
-  lastName: "Yun",
-  phoneNumber: "7739642148",
-  email: "kai.yun@example.com",
-  address: "123 Main St, Cityville",
-};
+
 
 // Function to capture all form fields on the page
 function captureFormFields() {
