@@ -9,24 +9,21 @@ app.use(cors());
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
 app.post('/call-openai', async (req, res) => {
-  const { resumeType, formFields } = req.body;
+  const { formFields, userData } = req.body;
 
   const prompt = `
-    You are helping a user fill out a job application. They provided the following form structure:
+    You are helping a user fill out a job application. The form has the following structure:
 
     ${JSON.stringify(formFields, null, 2)}
 
-    Based on this form structure, identify the appropriate selectors for the following fields:
-    - Full Name
-    - Email Address
-    - Resume Upload
-    - Phone Number
-    - Work Experience (Job Title, Company, Location, From-To Dates, Role Description)
-    - Education (School, Degree, Field of study, GPA, From-To Dates)
-    - Skills (e.g. Python, C++, Web development)
-    - Voluntary Disclosure (Gender, Ethnicity, Disability Status, Veteran Status)
-
-    Return the recommended selectors in a JSON format only, no other words.
+    The user provided the following details:
+    - Full Name: ${userData.fullName}
+    - Phone Number: ${userData.phoneNumber}
+    - Email: ${userData.email}
+    - Address: ${userData.address}
+    Based on this form structure and user data, return a mapping of which user data should fill which form fields.
+    Handle field name variations such as 'Name' vs 'Full Name' vs 'First Name' 'Last Name', 'Email' vs 'Email Address', etc.
+    Return the mapping as JSON object. no other words
   `;
 
   try {
