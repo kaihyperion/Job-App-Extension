@@ -9,28 +9,31 @@ app.use(cors());
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
 app.post('/call-openai', async (req, res) => {
-  const { formFields, userData } = req.body;
+  const { resumeType, formFields, userData } = req.body;
 
-  const prompt = `
-    You are helping a user fill out a job application. The form has the following structure:
+  const prompt = 
+  "You are helping a user fill out a job application form.\n\n" +
+  "The form fields are as follows:\n" +
+  JSON.stringify(formFields) + "\n\n" +
+  "The user's information is as follows:\n" +
+  JSON.stringify(userData) + "\n\n" +
+  "Please map the form fields to the user's information and return only the mapped fields as a JSON object.\n" +
+  "Only return valid JSON in the following format:\n" +
+  "{\n" +
+  '  "Full Name": "John Doe",\n' +
+  '  "Email": "john.doe@example.com",\n' +
+  '  ...\n' +
+  "}\n" +
+  "Do not include any additional text.";
+  
 
-    ${JSON.stringify(formFields, null, 2)}
-
-    The user provided the following details:
-    - Full Name: ${userData.fullName}
-    - Phone Number: ${userData.phoneNumber}
-    - Email: ${userData.email}
-    - Address: ${userData.address}
-    Based on this form structure and user data, return a mapping of which user data should fill which form fields.
-    Handle field name variations such as 'Name' vs 'Full Name' vs 'First Name' 'Last Name', 'Email' vs 'Email Address', etc.
-    Return the mapping as JSON object. no other words
-  `;
 
   try {
     const response = await axios.post('https://api.openai.com/v1/chat/completions', {
       model: 'gpt-4-turbo',
       messages: [{ role: 'user', content: prompt }],
-      max_tokens: 500
+      max_tokens: 500,
+      temperature: 0.7
     }, {
       headers: {
         'Authorization': `Bearer ${OPENAI_API_KEY}`,

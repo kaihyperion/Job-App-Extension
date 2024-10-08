@@ -1,8 +1,5 @@
 /*global chrome*/
 
-// General user information (to be provided dynamically or as part of form submission)
-
-
 // Function to capture all form fields on the page
 function captureFormFields() {
   const inputs = document.querySelectorAll("input, textarea, select");
@@ -33,25 +30,42 @@ function getLabelText(input) {
 // Function to fill a form field based on the selector
 function fillInput(selector, value) {
   let field = document.querySelector(selector);
-  
-  // Try different approaches if direct selection fails
+
   if (!field) {
-    // Try matching by placeholder
-    field = Array.from(document.querySelectorAll('input, textarea')).find(input => input.placeholder === selector);
+    console.log(`field: ${field} not found. trying different measures`);
+    field = Array.from(document.querySelectorAll('input, textarea')).find(input => input.name === selector || input.id === selector || input.placeholder === selector || getLabelText(input) === selector);
   }
-  if (!field) {
-    // Try matching by label
-    field = Array.from(document.querySelectorAll('input, textarea')).find(input => getLabelText(input) === selector);
-  }
-  
+
   if (field) {
+    console.log(`field: ${field} found`);
     field.value = value;
-    field.dispatchEvent(new Event('input', { bubbles: true }));
+    field.dispatchEvent(new Event('input', {bubbles: true}));
     console.log(`Filled ${selector} with value: ${value}`);
   } else {
     console.log(`Field ${selector} not found.`);
   }
 }
+// function fillInput(selector, value) {
+//   let field = document.querySelector(selector);
+  
+//   // Try different approaches if direct selection fails
+//   if (!field) {
+//     // Try matching by placeholder
+//     field = Array.from(document.querySelectorAll('input, textarea')).find(input => input.placeholder === selector);
+//   }
+//   if (!field) {
+//     // Try matching by label
+//     field = Array.from(document.querySelectorAll('input, textarea')).find(input => getLabelText(input) === selector);
+//   }
+  
+//   if (field) {
+//     field.value = value;
+//     field.dispatchEvent(new Event('input', { bubbles: true }));
+//     console.log(`Filled ${selector} with value: ${value}`);
+//   } else {
+//     console.log(`Field ${selector} not found.`);
+//   }
+// }
 
 // Listen for messages from background.js
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
@@ -64,29 +78,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       const fieldMapping = request.fieldMapping;
       console.log("Field Mapping: ", fieldMapping);
 
-      // Handle full name fields
-      if (fieldMapping["Full Name"]) {
-          console.log("name part");
-          if (fieldMapping.FullName.FirstName && fieldMapping.FullName.LastName) {
-              fillInput(fieldMapping.FullName.FirstName, userData.firstName);
-              fillInput(fieldMapping.FullName.LastName, userData.lastName);
-          } else if (fieldMapping.FullName.FullName) {
-              fillInput(fieldMapping.FullName.FullName, userData.fullName);
-          }
+      for (const[selector, value] of Object.entries(fieldMapping)) {
+        fillInput(selector, value);
       }
-
-      // Handle phone number
-      if (fieldMapping.PhoneNumber) {
-          console.log("phone");
-          fillInput(fieldMapping.PhoneNumber, userData.phoneNumber);
-      }
-
-      // Handle email address
-      if (fieldMapping.EmailAddress) {
-          console.log("email address aprt");
-          fillInput(fieldMapping.EmailAddress, userData.email);
-      }
-
       sendResponse({ status: "success" });
   }
 });

@@ -1,5 +1,13 @@
 /*global chrome*/
-
+const userData = {
+    fullName: "Kai Yun",
+    firstName: "Kai",
+    lastName: "Yun",
+    phoneNumber: "7739642148",
+    email: "kyperion.workmode@gmail.com",
+    linkedin: "https://www.linkedin.com/in/kai-hyperion-yun",
+    address: "5225 NW 85th Ave. Doral, FL 33166, USA",
+};
 // Function to send a message to the content script to capture form fields
 async function getFormFieldsFromContentScript(tabId) {
     return new Promise((resolve, reject) => {
@@ -15,21 +23,14 @@ async function getFormFieldsFromContentScript(tabId) {
 
 // Function to call the GPT-4 API via your backend server
 async function callGPT4API(resumeType, formFields) {
-    const userData = {
-        fullName: "Kai Yun",
-        firstName: "Kai",
-        lastName: "Yun",
-        phoneNumber: "7739642148",
-        email: "kai.yun@example.com",
-        address: "123 Main St, Cityville",
-    };
+
     try {
         const response = await fetch('http://localhost:3000/call-openai', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ formFields, userData })
+            body: JSON.stringify({ resumeType, formFields, userData })
         });
 
         const data = await response.json();
