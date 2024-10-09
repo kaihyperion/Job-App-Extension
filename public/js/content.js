@@ -18,6 +18,7 @@ function captureFormFields() {
   return fields;
 }
 
+
 // Helper function to get the label text associated with an input field
 function getLabelText(input) {
   if (input.labels && input.labels.length > 0) {
@@ -27,13 +28,31 @@ function getLabelText(input) {
   return label ? label.innerText.trim() : null;
 }
 
+// Helper function to normalize the string by keeping it lowercased and no space
+function normalizeString(str) {
+  return str ? str.toLowerCase().replace(/\s+/g, '') : null;
+}
+
 // Function to fill a form field based on the selector
 function fillInput(selector, value) {
   let field = document.querySelector(selector);
 
+  const normalizedSelector = normalizeString(selector);
+
   if (!field) {
     console.log(`field: ${field} not found. trying different measures`);
-    field = Array.from(document.querySelectorAll('input, textarea')).find(input => input.name === selector || input.id === selector || input.placeholder === selector || getLabelText(input) === selector);
+    field = Array.from(document.querySelectorAll('input, textarea')).find(input => {
+      // Normalize input name, id, placeholder, and label
+      const normalizedInputName = normalizeString(input.name);
+      const normalizedInputId = normalizeString(input.id);
+      const normalizedPlaceholder = normalizeString(input.placeholder);
+      const normalizedLabel = normalizeString(getLabelText(input));
+
+      return normalizedInputName === normalizedSelector ||
+              normalizedInputId === normalizedSelector ||
+              normalizedPlaceholder === normalizedSelector ||
+              normalizedLabel === normalizedSelector;
+    });
   }
 
   if (field) {
