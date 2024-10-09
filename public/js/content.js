@@ -30,30 +30,38 @@ function getLabelText(input) {
 
 // Helper function to normalize the string by keeping it lowercased and no space
 function normalizeString(str) {
-  return str ? str.toLowerCase().replace(/\s+/g, '') : null;
+  return str.toLowerCase().replace(/[^a-z0-9]/g, '');
 }
 
 // Function to fill a form field based on the selector
 function fillInput(selector, value) {
-  let field = document.querySelector(selector);
+  // let field = document.querySelector(selector);
 
   const normalizedSelector = normalizeString(selector);
+  let field = Array.from(document.querySelectorAll('input, textarea, select')).find(input => {
+    let labelText = getLabelText(input);
+    let nameMatch = normalizeString(input.name || '') === normalizedSelector;
+    let idMatch = normalizeString(input.id || '') === normalizedSelector;
+    let placeholderMatch = normalizeString(input.placeholder || '') === normalizedSelector;
+    let labelMatch = normalizeString(labelText || '') === normalizedSelector;
+    return nameMatch || idMatch || placeholderMatch || labelMatch;
+  });
 
-  if (!field) {
-    console.log(`field: ${field} not found. trying different measures`);
-    field = Array.from(document.querySelectorAll('input, textarea')).find(input => {
-      // Normalize input name, id, placeholder, and label
-      const normalizedInputName = normalizeString(input.name);
-      const normalizedInputId = normalizeString(input.id);
-      const normalizedPlaceholder = normalizeString(input.placeholder);
-      const normalizedLabel = normalizeString(getLabelText(input));
+  // if (!field) {
+  //   console.log(`field: ${field} not found. trying different measures`);
+  //   field = Array.from(document.querySelectorAll('input, textarea')).find(input => {
+  //     // Normalize input name, id, placeholder, and label
+  //     const normalizedInputName = normalizeString(input.name);
+  //     const normalizedInputId = normalizeString(input.id);
+  //     const normalizedPlaceholder = normalizeString(input.placeholder);
+  //     const normalizedLabel = normalizeString(getLabelText(input));
 
-      return normalizedInputName === normalizedSelector ||
-              normalizedInputId === normalizedSelector ||
-              normalizedPlaceholder === normalizedSelector ||
-              normalizedLabel === normalizedSelector;
-    });
-  }
+  //     return normalizedInputName === normalizedSelector ||
+  //             normalizedInputId === normalizedSelector ||
+  //             normalizedPlaceholder === normalizedSelector ||
+  //             normalizedLabel === normalizedSelector;
+  //   });
+  // }
 
   if (field) {
     console.log(`field: ${field} found`);
