@@ -33,6 +33,20 @@ function normalizeString(str) {
   return str.toLowerCase().replace(/[^a-z0-9]/g, '');
 }
 
+
+// Helper function to handle radio buttons
+function handleRadioButton(selector, value) {
+  const radios = document.querySelectorAll(`input[name="${selector}"]`);
+  for (const radio of radios){
+    if (radio.value.toLowerCase() === value.toLowerCase()) {
+      radio.checked = true;
+      radio.dispatchEvent(new Event('change', { bubbles: true}));
+      console.log(`Radio Button "${selector}" set to "${value}".`);
+      return;
+    }
+  }
+  console.log(`No matching radio button found for "${selector}" with value "${value}".`);
+}
 // Function to fill a form field based on the selector
 function fillInput(selector, value) {
   // let field = document.querySelector(selector);
@@ -47,30 +61,20 @@ function fillInput(selector, value) {
     return nameMatch || idMatch || placeholderMatch || labelMatch;
   });
 
-  // if (!field) {
-  //   console.log(`field: ${field} not found. trying different measures`);
-  //   field = Array.from(document.querySelectorAll('input, textarea')).find(input => {
-  //     // Normalize input name, id, placeholder, and label
-  //     const normalizedInputName = normalizeString(input.name);
-  //     const normalizedInputId = normalizeString(input.id);
-  //     const normalizedPlaceholder = normalizeString(input.placeholder);
-  //     const normalizedLabel = normalizeString(getLabelText(input));
-
-  //     return normalizedInputName === normalizedSelector ||
-  //             normalizedInputId === normalizedSelector ||
-  //             normalizedPlaceholder === normalizedSelector ||
-  //             normalizedLabel === normalizedSelector;
-  //   });
-  // }
 
   if (field) {
     console.log(`field: ${field} found`);
-    field.value = value;
-    field.dispatchEvent(new Event('input', {bubbles: true}));
-    console.log(`Filled ${selector} with value: ${value}`);
+    if (field.type === 'radio') {
+      handleRadioButton(selector,value);
+    } else {
+      field.value = value;
+      field.dispatchEvent(new Event('input', {bubbles: true}));
+      console.log(`Filled ${selector} with value: ${value}`);
+    }
   } else {
     console.log(`Field ${selector} not found.`);
   }
+  
 }
 // function fillInput(selector, value) {
 //   let field = document.querySelector(selector);

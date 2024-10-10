@@ -1,17 +1,11 @@
 /*global chrome*/
-const userData = {
-    fullName: "Kai Yun",
-    firstName: "Kai",
-    lastName: "Yun",
-    phoneNumber: "7739642148",
-    email: "kyperion.workmode@gmail.com",
-    linkedin: "https://www.linkedin.com/in/kai-hyperion-yun",
-    address: "5225 NW 85th Ave. Doral, FL 33166, USA",
-};
+
 // Function to send a message to the content script to capture form fields
 async function getFormFieldsFromContentScript(tabId) {
     return new Promise((resolve, reject) => {
-        chrome.tabs.sendMessage(tabId, { action: "captureFields" }, (response) => {
+        chrome.tabs.sendMessage(tabId, {
+            action: "captureFields"
+        }, (response) => {
             if (chrome.runtime.lastError) {
                 reject(chrome.runtime.lastError);
             } else {
@@ -30,7 +24,10 @@ async function callGPT4API(resumeType, formFields) {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ resumeType, formFields, userData })
+            body: JSON.stringify({
+                resumeType,
+                formFields
+            })
         });
 
         const data = await response.json();
@@ -46,7 +43,9 @@ async function callGPT4API(resumeType, formFields) {
 async function injectContentScript(tabId) {
     try {
         await chrome.scripting.executeScript({
-            target: { tabId: tabId },
+            target: {
+                tabId: tabId
+            },
             files: ['js/content.js']
         });
         console.log('Content script injected successfully.');
@@ -59,7 +58,10 @@ async function injectContentScript(tabId) {
 chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
     if (request.action === 'apply') {
         try {
-            const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
+            const [activeTab] = await chrome.tabs.query({
+                active: true,
+                currentWindow: true
+            });
             await injectContentScript(activeTab.id);
 
             // Capture form fields from content script
@@ -69,20 +71,28 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
             // Send form fields to backend for LLM processing
             const fieldMapping = await callGPT4API(request.resumeType, formFields);
             console.log('GPT4 response:', fieldMapping);
-            
+
             if (fieldMapping) {
                 // Send field mapping to content script for autofill
-                chrome.tabs.sendMessage(activeTab.id, { action: "fillForm", fieldMapping: fieldMapping }, (response) => {
+                chrome.tabs.sendMessage(activeTab.id, {
+                    action: "fillForm",
+                    fieldMapping: fieldMapping
+                }, (response) => {
                     if (response.status === 'success') {
                         console.log('Form filled successfully.');
                     }
                 });
             } else {
-                sendResponse({ status: 'failure' });
+                sendResponse({
+                    status: 'failure'
+                });
             }
         } catch (error) {
             console.error('Error:', error);
-            sendResponse({ status: 'failure', message: error.message });
+            sendResponse({
+                status: 'failure',
+                message: error.message
+            });
         }
     }
     return true;
