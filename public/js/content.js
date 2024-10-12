@@ -5,19 +5,81 @@ function captureFormFields() {
   const inputs = document.querySelectorAll("input, textarea, select");
   
   const fields = Array.from(inputs).map(input => {
+    let options = null;
+
+    // If it's a select element (dropdown), capture options
+    if (input.tagName.toLowerCase() === 'select') {
+      options = Array.from(input.options).map(option => ({
+        value: option.value,
+        text: option.text
+      }));
+    }
       return {
           tag: input.tagName,
           name: input.name || null,
           id: input.id || null,
           placeholder: input.placeholder || null,
           type: input.type || null,
-          label: getLabelText(input)
+          label: getLabelText(input),
+          options: options 
       };
   });
   
   return fields;
 }
 
+function smoothScrollToElement(element) {
+  element.scrollIntoView({
+    behavior: 'smooth',
+    block: 'center'
+  });
+}
+
+function simulateClick(element){
+  if (element) {
+    const clickEvent = new MouseEvent('click', {
+      bubbles: true,
+      cancelable: true,
+      view: window
+    });
+    element.dispatchEvent(clickEvent);
+    console.log('Simulated click on:', element);
+  }
+}
+// Helper function to simulate dropdown menus and clickiting
+function simulateClickAndCaptureOptions(selector) {
+  console.log(`Attempting to click dropdown for field: ${selector.id || selector.name}`);
+  simulateClick(selector);
+
+  console.log('Dropdown clicked, attempting to capture options...');
+
+  return new Promise(resolve => {
+    setTimeout(() => {
+      const options = Array.from(selector.querySelectorAll('option')).map(option => ({
+        value: option.value,
+        text: option.textContent.trim()
+      }));
+      console.log('Captured options:', options);
+      resolve(options);
+    }, 500);
+  });
+  // const dropdown = document.querySelector(selector);
+  // if (dropdown) {
+  //     dropdown.click(); // clicking to simulate
+
+  //     // wait for options to appear
+  //     setTimeout(() => {
+  //       const options = document.querySelectorAll('.select2-result');
+  //       const optionList = Array.from(options).map(option => ({
+  //         value: option.value || option.getAttribute('aria-selected'),
+  //         text: option.innerText.trim()
+  //       }));
+
+  //       console.log('Caputred dropdown options:', optionList);
+  //       return optionList;
+  //     }, 500); // currently set 500 for delay
+  // }
+}
 
 // Helper function to get the label text associated with an input field
 function getLabelText(input) {
@@ -47,34 +109,57 @@ function handleRadioButton(selector, value) {
   }
   console.log(`No matching radio button found for "${selector}" with value "${value}".`);
 }
-// Function to fill a form field based on the selector
-function fillInput(selector, value) {
-  // let field = document.querySelector(selector);
 
+
+async function fillInput(selector, value) {
   const normalizedSelector = normalizeString(selector);
   let field = Array.from(document.querySelectorAll('input, textarea, select')).find(input => {
-    let labelText = getLabelText(input);
-    let nameMatch = normalizeString(input.name || '') === normalizedSelector;
-    let idMatch = normalizeString(input.id || '') === normalizedSelector;
-    let placeholderMatch = normalizeString(input.placeholder || '') === normalizedSelector;
-    let labelMatch = normalizeString(labelText || '') === normalizedSelector;
-    return nameMatch || idMatch || placeholderMatch || labelMatch;
+      let labelText = getLabelText(input);
+      let nameMatch = normalizeString(input.name || '') === normalizedSelector;
+      let idMatch = normalizeString(input.id || '') === normalizedSelector;
+      let placeholderMatch = normalizeString(input.placeholder || '') === normalizedSelector;
+      let labelMatch = normalizeString(labelText || '') === normalizedSelector;
+      return nameMatch || idMatch || placeholderMatch || labelMatch;
   });
 
-
   if (field) {
-    console.log(`field: ${field} found`);
-    if (field.type === 'radio') {
-      handleRadioButton(selector,value);
-    } else {
-      field.value = value;
-      field.dispatchEvent(new Event('input', {bubbles: true}));
-      console.log(`Filled ${selector} with value: ${value}`);
-    }
+      console.log(`Field: ${field.tagName} with selector: ${selector} found`);
+
+      // Scroll to the field smoothly
+      smoothScrollToElement(field);
+
+      // Add a short delay to mimic user interaction
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      if (field.tagName.toLowerCase() === 'select' || field.classList.contains('select2-hidden-accessible')) {
+          console.log(`Handling Select2 dropdown for field: ${field.name || field.id}`);
+
+          // Open the Select2 dropdown
+          const select2Choice = document.querySelector(`#s2id_${field.id} .select2-choice`);
+          if (select2Choice) {
+              select2Choice.click(); // Trigger the click to open the dropdown
+
+              // Wait for the dropdown to open
+              await new Promise(resolve => setTimeout(resolve, 500));
+
+              // Set the value using Select2 API
+              field.value = value;
+              const event = new Event('change', { bubbles: true });
+              field.dispatchEvent(event);
+              console.log(`Set Select2 dropdown value for ${field.name || field.id} to ${value}`);
+          }
+      } else if (field.tagName.toLowerCase() === 'select') {
+          console.log(`Handling regular dropdown for field: ${field.name || field.id}`);
+          field.value = value;
+          field.dispatchEvent(new Event('change', { bubbles: true }));
+      } else {
+          console.log(`Filling text field with value: ${value}`);
+          field.value = value;
+          field.dispatchEvent(new Event('input', { bubbles: true }));
+      }
   } else {
-    console.log(`Field ${selector} not found.`);
+      console.log(`Field ${selector} not found.`);
   }
-  
 }
 // function fillInput(selector, value) {
 //   let field = document.querySelector(selector);

@@ -39,20 +39,21 @@ app.post('/call-openai', async (req, res) => {
   } = req.body;
 
   const prompt =
-    "You are helping a user fill out a job application form.\n\n" +
-    "The form fields are as follows:\n" +
-    JSON.stringify(formFields) + "\n\n" +
-    "The user's information is as follows:\n" +
-    JSON.stringify(userData) + "\n\n" +
-    "Please map the form fields to the user's information and return only the mapped fields as a JSON object.\n" +
-    "Only return valid JSON in the following format:\n" +
-    "{\n" +
-    '  "Full Name": "John Doe",\n' +
-    '  "Email": "john.doe@example.com",\n' +
-    '  ...\n' +
-    "}\n" +
-    "Do not include any additional text.";
-
+  "You are helping a user fill out a job application form.\n\n" +
+  "The form fields are as follows:\n" +
+  JSON.stringify(formFields) + "\n\n" +
+  "The user's information is as follows:\n" +
+  JSON.stringify(userData) + "\n\n" +
+  "Please map the form fields to the user's information and return only the mapped fields as a JSON object.\n" +
+  "Make sure to select appropriate values from dropdown options.\n" +
+  "Return valid JSON in the following format:\n" +
+  "{\n" +
+  '  "Full Name": "John Doe",\n' +
+  '  "Email": "john.doe@example.com",\n' +
+  '  "Are you legally authorized to work in the country?": "Yes",\n' +
+  '  ...\n' +
+  "}\n" +
+  "Do not include any additional text.";
 
 
   try {
