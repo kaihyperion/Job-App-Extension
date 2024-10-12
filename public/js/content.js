@@ -1,5 +1,46 @@
 /*global chrome*/
 
+
+
+// Visual effects to extensions
+// Function to create and show the loading overlay
+function showLoadingOverlay(status = 'Loading...') {
+  let overlay = document.getElementById('extension-loading-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'extension-loading-overlay';
+    overlay.style.position = 'fixed';
+    overlay.style.top = '0';
+    overlay.style.left = '0';
+    overlay.style.width = '100vw';
+    overlay.style.height = '100vh';
+    overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+    overlay.style.zIndex = '9999';
+    overlay.style.display = 'flex';
+    overlay.style.justifyContent = 'center';
+    overlay.style.alignItems = 'center';
+    overlay.style.fontSize = '24px';
+    overlay.style.color = '#fff';
+    overlay.style.transition = 'opacity 0.5s';
+
+    document.body.appendChild(overlay);
+  }
+  overlay.innerHTML = status;
+  overlay.style.opacity = '1'; // Ensure it's visible
+}
+
+// Function to hide the loading overlay
+function hideLoadingOverlay() {
+  const overlay = document.getElementById('extension-loading-overlay');
+  if (overlay) {
+    overlay.style.opacity = '0'; // Smoothly fade out
+    setTimeout(() => {
+      overlay.remove();
+    }, 500); // Remove the overlay after the fade-out completes
+  }
+}
+
+
 // Function to capture all form fields on the page
 function captureFormFields() {
   const inputs = document.querySelectorAll("input, textarea, select");
@@ -112,6 +153,8 @@ function handleRadioButton(selector, value) {
 
 
 async function fillInput(selector, value) {
+  showLoadingOverlay("Filling form...");
+
   const normalizedSelector = normalizeString(selector);
   let field = Array.from(document.querySelectorAll('input, textarea, select')).find(input => {
       let labelText = getLabelText(input);
@@ -160,6 +203,8 @@ async function fillInput(selector, value) {
   } else {
       console.log(`Field ${selector} not found.`);
   }
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  hideLoadingOverlay();
 }
 // function fillInput(selector, value) {
 //   let field = document.querySelector(selector);
