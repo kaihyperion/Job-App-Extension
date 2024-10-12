@@ -14,9 +14,20 @@ const userData = {
   firstName: process.env.USER_FIRST_NAME,
   lastName: process.env.USER_LAST_NAME,
   phoneNumber: process.env.USER_PHONE_NUMBER,
+  phoneDeviceType: process.env.USER_PHONE_DEVICE_TYPE,
   email: process.env.USER_EMAIL,
   linkedin: process.env.USER_LINKEDIN,
-  address: process.env.USER_ADDRESS
+  address: process.env.USER_ADDRESS,
+  gender: process.env.USER_GENDER,
+  pronoun: process.env.USER_PRONOUN,
+  graduationYear: process.env.USER_GRADUATION_YEAR,
+  graduationMonth: process.env.USER_GRADUATION_MONTH,
+  portfolioWebsite: process.env.USER_PORTFOLIO_WEBSITE,
+  userGitHub: process.env.USER_GITHUB_WEBSITE,
+  visaStatus: process.env.USER_VISA_STATUS,
+  citizenship: process.env.USER_CITIZENSHIP,
+  veteranStatus: process.env.USER_VETERAN_STATUS,
+  currentCompany: process.env.CURRENT_COMPANY
 }
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
