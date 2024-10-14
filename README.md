@@ -1,26 +1,85 @@
-# Job Application Automation Chrome Extension
+# 🚀 LLM-Powered Job Application Automation Tool
 
-This project is a Google Chrome extension built using React that automates job application submissions by filling in forms based on user input and an LLM (Large Language Model) for dynamic form field mapping.
+A powerful **Chrome extension** leveraging **GPT-4** to automate job applications. This tool intelligently maps user data to form fields, fills out job applications across multiple job portals, and ensures seamless user interaction using **Node.js**, **Express.js**, and **Chrome APIs**.
 
-## Features
-- Popup UI to input job URL and resume type.
-- Automatically fills job application forms on major job portals.
-- Dynamically maps form fields using LLM (e.g., GPT-4).
+---
 
-## Installation
+## 📖 **Table of Contents**
 
-1. Clone the repository:
+- [Demo](#demo)
+- [Features](#features)
+- [Technologies Used](#technologies-used)
+- [Installation](#installation)
+- [How It Works](#how-it-works)
+- [Screenshots](#screenshots)
+- [Future Improvements](#future-improvements)
+- [Contributing](#contributing)
+- [License](#license)
+- [Contact](#contact)
+- [Acknowledgements](#acknowledgements)
+
+---
+
+## 🎥 **Demo**
+
+Add a GIF or video of your extension in action:
+
+![Demo GIF](https://your-demo-url.com/demo.gif)
+
+---
+
+## ✨ **Features**
+
+- **GPT-4 Integration:** Uses LLM to map user data intelligently to application forms.
+- **Mass Auto-Fill for Text Fields:** Automatically fills out multiple text fields at once.
+- **Select Box Automation:** Clicks and reveals dropdowns, chooses the best-matching option based on user data.
+- **Chrome Extension Architecture:** Seamlessly communicates between background, content scripts, and UI components.
+- **Backend with Node.js and Express.js:** Handles secure API calls to OpenAI and data mapping.
+- **Error Handling:** Ensures smooth user experience with effective error management.
+
+---
+
+## 🛠️ **Technologies Used**
+
+- **React.js** – Frontend UI for the extension popup.
+- **Node.js + Express.js** – Backend for secure API handling.
+- **Chrome API** – Manages browser actions like tab and form interactions.
+- **GPT-4** – For intelligent data mapping and form filling.
+- **JavaScript** – Handles interactions between background scripts, content scripts, and UI.
+
+---
+
+## 🚀 **Installation**
+
+1. **Clone the repository**:
    ```bash
-   git clone https://github.com/yourusername/job-app-extension.git
+   git clone https://github.com/kaihyperion/job-app-extension.git
+   cd job-app-extension
 
+2. **Install Dependencies**
+   ```bash
+   npm install
 
-# Getting Started with Create React App
+3. **Set up backend**
+   - create a `.env` file in the root directory
+   ```bash
+   USER_FULL_NAME=John Doe
+   USER_FIRST_NAME=John
+   USER_LAST_NAME=Doe
+   USER_EMAIL=john.doe@example.com
+   USER_PHONE=123-456-7890
+   USER_LINKEDIN=https://linkedin.com/in/johndoe
+   OPENAI_API_KEY=your-openai-api-key
+   etc...
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+4. **Start the backend server:**
+   ```bash
+   node public/js/server.js
 
-
-
-
+5. **Load the Chrome Extension**
+   - Open chrome and go to `chrome://extensions/`
+   - Enable **Developer Mode**
+   - Click **Load Unpacked** and select the `job-app-extension` folder
 
 ## Available Scripts
 

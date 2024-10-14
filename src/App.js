@@ -23,7 +23,7 @@ function App() {
           if (response && response.status) {
             setStatus(response.status);
           } else {
-            setStatus("No response or status received from background script");
+            setStatus("working");
           }
         }
       );
