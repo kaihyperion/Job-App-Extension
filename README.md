@@ -10,21 +10,14 @@ A powerful **Chrome extension** leveraging **GPT-4** to automate job application
 - [Features](#features)
 - [Technologies Used](#technologies-used)
 - [Installation](#installation)
-- [How It Works](#how-it-works)
-- [Screenshots](#screenshots)
-- [Future Improvements](#future-improvements)
-- [Contributing](#contributing)
-- [License](#license)
-- [Contact](#contact)
-- [Acknowledgements](#acknowledgements)
+
 
 ---
 
 ## 🎥 **Demo**
 
-Add a GIF or video of your extension in action:
 
-![Demo GIF](https://your-demo-url.com/demo.gif)
+![Demo GIF](https://github.com/kaihyperion/Job-App-Extension/blob/master/demo.gif)
 
 ---
 
